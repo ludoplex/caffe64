@@ -19,23 +19,23 @@ def setup(imName,expName=""):
 
     C = np.concatenate([X.reshape(-1,1),Y.reshape(-1,1)],axis=1)
 
-    np.savetxt(expName+"im_X.txt",C,fmt="%f",delimiter=" ",)
-    np.savetxt(expName+"im_Yr.txt",R.ravel(),fmt="%f",delimiter=" ")
-    np.savetxt(expName+"im_Yg.txt",G.ravel(),fmt="%f",delimiter=" ")
-    np.savetxt(expName+"im_Yb.txt",B.ravel(),fmt="%f",delimiter=" ")
+    np.savetxt(f"{expName}im_X.txt", C, fmt="%f", delimiter=" ")
+    np.savetxt(f"{expName}im_Yr.txt", R.ravel(), fmt="%f", delimiter=" ")
+    np.savetxt(f"{expName}im_Yg.txt", G.ravel(), fmt="%f", delimiter=" ")
+    np.savetxt(f"{expName}im_Yb.txt", B.ravel(), fmt="%f", delimiter=" ")
 
     sz = h*w
 
     trc = "../caffe64 train %s %sim_%%s.bin %s %d %sim_X.txt %sim_Y%%s.txt" % (NETWORK_NAME,expName,OPTIMSETTING_NAME,sz,expName,expName)
     tec = "../caffe64 test %s %sim_%%s.bin %d %sim_X.txt %sim_Y%%sr.txt" % (NETWORK_NAME,expName,sz,expName,expName)
 
-    comf = file(expName+"com.sh","w")
+    comf = file(f"{expName}com.sh", "w")
     for c in "rgb":
         comf.write(trc % (c,c)+"\n")
         comf.write(tec % (c,c)+"\n")
 
 def run(expName=""):
-    os.system("bash %scom.sh" % expName)
+    os.system(f"bash {expName}com.sh")
 
 
 def reconstructTo(imName,expName=""):
@@ -44,12 +44,12 @@ def reconstructTo(imName,expName=""):
 
     reco = lambda x: np.expand_dims(x.reshape(h,w),axis=2)
 
-    Yr = reco(np.loadtxt(expName+"im_Yrr.txt"))
-    Yg = reco(np.loadtxt(expName+"im_Ygr.txt"))
-    Yb = reco(np.loadtxt(expName+"im_Ybr.txt"))
+    Yr = reco(np.loadtxt(f"{expName}im_Yrr.txt"))
+    Yg = reco(np.loadtxt(f"{expName}im_Ygr.txt"))
+    Yb = reco(np.loadtxt(f"{expName}im_Ybr.txt"))
     Ir = np.clip(np.concatenate([Yr,Yg,Yb],axis=2),-1,1)
     Ir = (Ir*128)+128
-    cv2.imwrite(imName+"_reco.png",Ir)
+    cv2.imwrite(f"{imName}_reco.png", Ir)
 
 def cleanup(expName=""):
     toRm = ["im_X.txt","com.sh"]
