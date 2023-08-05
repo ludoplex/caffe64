@@ -17,8 +17,8 @@ def die(msg):
 
 
 def convert(fname, fname_out):
-    print('converting %s' % fname)
-    with gzip.open(fname, 'r') as fin, open(fname_out, 'w') as fout:
+    print(f'converting {fname}')
+    with (gzip.open(fname, 'r') as fin, open(fname_out, 'w') as fout):
         # important to read metadata in case Mr. Yann decides to change MNIST
         magic = struct.unpack('>i', fin.read(4))[0]
         if magic == 2049:
@@ -32,15 +32,15 @@ def convert(fname, fname_out):
                 image = struct.unpack('%dB' % imgsize, fin.read(imgsize))
                 fout.write(" ".join(str(px-128) for px in image)+"\n")
         else:
-            die('%s is not MNIST!!!' % fname)
-    print('saving converted file to %s' % fname_out)
+            die(f'{fname} is not MNIST!!!')
+    print(f'saving converted file to {fname_out}')
 
 
 def dl(fn):
-    print('downloading %s' % fn)
-    res = subprocess.call(['wget', '%s/%s' % (YANN_BASE, fn)])
+    print(f'downloading {fn}')
+    res = subprocess.call(['wget', f'{YANN_BASE}/{fn}'])
     if res != 0:
-        die("Can't download %s" % fn)
+        die(f"Can't download {fn}")
 
 
 if __name__ == "__main__":
